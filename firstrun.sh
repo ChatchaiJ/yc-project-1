@@ -50,7 +50,7 @@ if [ -f "${CHROME_DEB}" ]; then
 	apt-get install -y fonts-liberation
 	dpkg -i ${CHROME_DEB}
 else
-	echo "Something wrong, there is no '${CHROME_DEB}' file, can't install google chrome"
+	echo "ERROR: Something wrong, there is no '${CHROME_DEB}' file, can't install google chrome"
 fi
 
 # Install AnyDesk
@@ -59,18 +59,18 @@ wget ${ANYDESK_URL}
 if [ -f "${ANYDESK_DEB}" ]; then
 	dpkg -i ${ANYDESK_DEB}
 else
-	echo "Something wrong, there is no '${ANYDESK_DEB}' file, can't install anydesk"
+	echo "ERROR: Something wrong, there is no '${ANYDESK_DEB}' file, can't install anydesk"
 fi
 
 # Setup autologin for user 'demo'
 # Assume lightdm is the 'DisplayManager'
 if [ -z "$(id -u demo 2>/dev/null)" ]; then
-	echo "No user demo? -- Can't configure autologin."
+	echo "ERROR: No user demo? -- Can't configure autologin."
 	exit
 fi
 
 if [ ! -d "/etc/lightdm" ]; then
-	echo "Not using lightdm as Display Manager? -- Stop here."
+	echo "ERROR: Not using lightdm as Display Manager? -- Stop here."
 	exit
 fi
 
