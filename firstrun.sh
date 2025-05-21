@@ -101,4 +101,4 @@ MimeType=application/pdf;application/rdf+xml;application/rss+xml;application/xht
 Actions=new-window;new-private-window;
 _END_
 
-chown -R ${USER}:${USER} /home/${USER}/.config/autostart
+chown -R ${USER}:${USER} /home/${USER}/.config
