@@ -1,0 +1,36 @@
+#!/bin/sh
+
+SVR="ftp.debian.org"
+LOG="/root/rc.local-firstrun.log"
+SCRIPTLOG="/root/firstrun-$(date +%Y%m%d-%H%M).log"
+
+echo "$(date) -- rc.local -- start here" >> ${LOG}
+
+# wait for DNS resolve to be ready
+COUNT=0
+while true; do
+	RES="$(host ${SVR} | grep NXDOMAIN)"
+	if [ -z "${RES}" ]; then
+		echo "$(date) -- rc.local -- DNS resolve for ${SVR} ok at COUNT=${COUNT}, stop here" >> ${LOG}
+		break
+	fi
+
+	host ${SVR} 2>&1 >> ${LOG}
+
+	COUNT=$(expr ${COUNT} + 1)
+	if [ ${COUNT} -gt 120 ]; then
+		echo "$(date) -- rc.local -- DNS resolve for ${SVR} failed, stop here" >> ${LOG}
+		exit
+	fi
+
+	sleep 1
+done
+
+# Disable 'this' rc.local
+[ -f /etc/rc.local ] && { mv -f /etc/rc.local /etc/rc.local.$(date +%s); touch /etc/rc.local; }
+
+# Now we can try execute firstrun.sh
+if [ -f /var/tmp/firstrun.sh ]; then
+	mv /var/tmp/firstrun.sh /var/tmp/firstrun.sh.disabled
+	script -c "/bin/sh /var/tmp/firstrun.sh.disabled" -O ${SCRIPTLOG}
+fi
